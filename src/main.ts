@@ -62,6 +62,8 @@ async function bootstrap() {
     jsonDocumentUrl: 'swagger/json',
   });
 
+  logger.log('Port: ' + process.env.PORT);
+
   const port = configService.getOrThrow<number>('port');
 
   await app.listen(port);

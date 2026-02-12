@@ -32,6 +32,7 @@ const drizzleModule =
   imports: [
     ConfigModule.forRoot({
       envFilePath: ['.env'],
+      ignoreEnvVars: process.env.NODE_ENV === 'production',
       load: [configuration],
       isGlobal: true,
     }),
