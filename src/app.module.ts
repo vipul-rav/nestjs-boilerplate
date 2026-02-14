@@ -4,6 +4,7 @@ import { SampleAPIModule } from './sample-api/sample-api.module';
 import configuration from './config/configuration';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { LoggerInterceptor } from './interceptors/logger.interceptor';
+import { TransactionInterceptor } from './interceptors/transaction.interceptor';
 import { NestDrizzleModule } from './drizzle/drizzle.module';
 import * as schema from './drizzle/schema';
 
@@ -45,6 +46,10 @@ const drizzleModule =
     {
       provide: APP_INTERCEPTOR,
       useClass: LoggerInterceptor,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: TransactionInterceptor,
     },
   ],
 })

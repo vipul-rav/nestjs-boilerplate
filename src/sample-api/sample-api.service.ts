@@ -1,13 +1,17 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, Logger } from '@nestjs/common';
 import { TicketResponseDto } from './dto/response-ticket.dto';
 import { CreateTicketDto } from './dto/create-ticket.dto';
 import { ISampleAPIRepository } from './interfaces/sample-api.repository.interface';
 
 @Injectable()
 export class SampleAPIService {
-  constructor(private readonly sampleAPIRepository: ISampleAPIRepository) {}
+  constructor(
+    private readonly sampleAPIRepository: ISampleAPIRepository,
+    private readonly logger: Logger,
+  ) {}
 
-  findAll(): TicketResponseDto[] {
+  findAll(correlationId: string): TicketResponseDto[] {
+    this.logger.log(`service.findAll - correlationId=${correlationId}`);
     return this.sampleAPIRepository.findAll().map((ticket) => ({
       ...ticket,
       artist: ticket.artist ?? '',
@@ -19,6 +23,7 @@ export class SampleAPIService {
   }
 
   findOne(id: number): TicketResponseDto | undefined {
+    this.logger.log(`service.findOne - id=${id}`);
     const ticket = this.sampleAPIRepository.findOne(id);
     if (!ticket) {
       throw new NotFoundException(`ticket not found`);
@@ -34,6 +39,7 @@ export class SampleAPIService {
     };
   }
   create(ticket: CreateTicketDto) {
+    this.logger.log(`service.create - ticket=${JSON.stringify(ticket)}`);
     // id is set to 0 as a placeholder; repository will assign the correct id
     return this.sampleAPIRepository.create({
       ...ticket,

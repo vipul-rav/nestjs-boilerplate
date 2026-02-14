@@ -1,4 +1,4 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable, Inject, Logger } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
 import { DRIZZLE_ORM } from '../constants/db.constants';
 import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
@@ -11,7 +11,7 @@ type Ticket = typeof schema.tickets.$inferSelect;
 export class SampleAPIRepository implements ISampleAPIRepository {
   private tickets: Ticket[];
   private readonly dateFormat: string;
-  constructor() {
+  constructor(private readonly logger: Logger) {
     //@Inject(DRIZZLE_ORM) private conn: PostgresJsDatabase<typeof schema>, //uncomment this line to use drizzle-orm for database operations instead of in-memory array
     this.tickets = [
       {
@@ -46,16 +46,25 @@ export class SampleAPIRepository implements ISampleAPIRepository {
   }
 
   findAll(): Ticket[] {
+    this.logger.log(
+      `repository.findAll - returning ${this.tickets.length} tickets`,
+    );
     return this.tickets;
   }
 
   findOne(id: number): Ticket | undefined {
+    this.logger.log(`repository.findOne - id=${id}`);
     const ticket = this.tickets.find((ticket) => ticket.id === id);
+    if (!ticket) {
+      this.logger.warn(`repository.findOne - ticket not found id=${id}`);
+    }
     return ticket;
   }
   create(ticket: Ticket) {
+    this.logger.log(`repository.create - ticket incoming`);
     const newTicket = { ...ticket, id: this.tickets.length + 1 };
     this.tickets.push(newTicket);
+    this.logger.log(`repository.create - created id=${newTicket.id}`);
     return newTicket;
   }
 }

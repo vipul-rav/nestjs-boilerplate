@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Logger, Module } from '@nestjs/common';
 import { SampleAPIController } from './sample-api.controller';
 import { SampleAPIService } from './sample-api.service';
 import { SampleAPIRepository } from './sample-api.repository';
@@ -8,6 +8,7 @@ import { ISampleAPIRepository } from './interfaces/sample-api.repository.interfa
   controllers: [SampleAPIController],
   providers: [
     SampleAPIService,
+    Logger,
     {
       provide: ISampleAPIRepository,
       useClass: SampleAPIRepository,
